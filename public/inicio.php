@@ -13,7 +13,7 @@
 
 
 
-    <form id="formulario" action="/vistas/formulario.php" method="post">
+    <form id="formulario" action="/formulario.php" method="post">
         Nombre: <input type="text" name="nombre" id="nombre"> <br>
         Apellido: <input type="text" name="apellido" id="apellido"> <br>
         Edad: <input type="number" name="edad" id="edad"> <br>
