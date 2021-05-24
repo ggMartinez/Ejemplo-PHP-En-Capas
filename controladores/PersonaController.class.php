@@ -1,6 +1,6 @@
 <?php 
 
-    require '../modelos/PersonaModelo.class.php';
+    require '../utils/autoloader.php';
 
     class PersonaController{
 
@@ -17,7 +17,8 @@
                     return true;
                 }
                 catch(Exception $e){
-                    return $e -> getMessage();
+                    error_log($e -> getMessage());
+                    return false;
                 }
             }
             return false;

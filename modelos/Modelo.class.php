@@ -1,6 +1,6 @@
 <?php 
 
-    require '../config.php';
+    require '../utils/autoloader.php';
     
     class Modelo{
         protected $IpDB;

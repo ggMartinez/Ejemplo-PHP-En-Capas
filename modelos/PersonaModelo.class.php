@@ -1,5 +1,5 @@
 <?php 
-    require 'Modelo.class.php';
+    require '../utils/autoloader.php';
 
     class PersonaModelo extends Modelo{
         public $id;
@@ -29,13 +29,16 @@
             }
             $this -> conexion -> query($sql);
             if($this -> conexion -> error){
-                throw new Exception("Hubo un problema al cargar la persona");
+                throw new Exception("Hubo un problema al cargar la persona: " . $this -> conexion -> error);
             }
         }
 
         public function eliminar(){
             $sql = "DELETE FROM persona WHERE id = '{$this -> id}'";
             $this -> conexion -> query($sql);
+            if($this -> conexion -> error){
+                throw new Exception("Hubo un problema al eliminar la persona: " . $this -> conexion -> error);
+            }
         }
 
 
@@ -52,12 +55,18 @@
                 $p -> email = $fila['email'];
                 array_push($filas,$p);
             }
+            if($this -> conexion -> error){
+                throw new Exception("Error al obtener las personas: " . $this -> conexion -> error);
+            }
             return $filas;
         }
 
         public function obtenerUno($id){
             $sql = "SELECT id,nombre,apellido,edad,email FROM persona WHERE id = $id";
             $resultado =  $this -> conexion -> query($sql) -> fetch_assoc();
+            if($this -> conexion -> error){
+                throw new Exception("Error al obtener la personas: " . $this -> conexion -> error);
+            }
             $this -> id = $resultado['id'];
             $this -> nombre = $resultado['nombre'];
             $this -> apellido = $resultado['apellido'];

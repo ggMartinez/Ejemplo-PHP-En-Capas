@@ -1,5 +1,5 @@
 <?php 
-    require '../controladores/PersonaController.class.php';
+    require '../utils/autoloader.php';
 
 
     $resultado = PersonaController::AltaDePersona($_POST['nombre'],$_POST['apellido'],$_POST['edad'],$_POST['email']);
