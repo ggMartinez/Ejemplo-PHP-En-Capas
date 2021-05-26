@@ -3,3 +3,14 @@
 Instalar docker, docker-compose, clonar este repo, y tirar esto en la consola:
 `docker-compose up --build`
 
+
+CREAR ESTA TABLA:
+```
+create table persona(
+    id int primary key auto_increment,
+    nombre varchar(10),
+    apellido varchar(10),
+    edad int,
+    email varchar(50)
+)
+```
