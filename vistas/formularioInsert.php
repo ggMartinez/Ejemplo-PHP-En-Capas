@@ -12,8 +12,15 @@
 <body>
 
 
+    <?php if(isset($parametros['exito']) && $parametros['exito'] == true): ?>
+        <div style="color: #00FF00"> La persona se guardo con exito </div>
+    <?php endif; ?>
 
-    <form id="formulario" action="/formulario.php" method="post">
+    <?php if(isset($parametros['exito']) && $parametros['exito'] == false): ?>
+        <div style="color: #FF0000"> Hubo un problema al guardar la persona </div>
+    <?php endif; ?>
+
+    <form id="formulario" action="/insertar" method="post">
         Nombre: <input type="text" name="nombre" id="nombre"> <br>
         Apellido: <input type="text" name="apellido" id="apellido"> <br>
         Edad: <input type="number" name="edad" id="edad"> <br>

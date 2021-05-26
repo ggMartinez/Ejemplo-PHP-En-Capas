@@ -6,7 +6,7 @@
 
         public static function AltaDePersona($nombre,$apellido,$edad,$email){
 
-            if($nombre !== "" && $apelllido !== "" && $edad !== "" && $email !== ""){
+            if($nombre !== "" && $apellido !== "" && $edad !== "" && $email !== ""){
                 try{
                     $p = new PersonaModelo();
                     $p -> nombre = $nombre;
@@ -14,14 +14,14 @@
                     $p -> edad = $edad;
                     $p -> email = $email;
                     $p -> guardar();
-                    return true;
+                    return generarHtml('formularioInsert',['exito' => true]);
                 }
                 catch(Exception $e){
                     error_log($e -> getMessage());
-                    return false;
+                    return generarHtml('formularioInsert',['exito' =>false]);
                 }
             }
-            return false;
+            return generarHtml('formularioInsert',['exito' => false]);
         }
 
         public static function ObtenerPersonas(){
@@ -37,7 +37,7 @@
                 );
                 array_push($personas,$persona);
             }
-            return $personas;
+            return generarHtml('listar',['personas' => $personas]);
         }
         
         public static function EliminarPersona($id){
