@@ -9,6 +9,7 @@
         protected $NombreDB;
         protected $PuertoDB;
         protected $conexion;
+        protected $sentencia;
 
         public function __construct(){
             $this -> inicializarParametrosDeConexion();

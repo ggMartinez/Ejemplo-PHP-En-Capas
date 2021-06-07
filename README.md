@@ -12,5 +12,13 @@ create table persona(
     apellido varchar(10),
     edad int,
     email varchar(50)
-)
+);
+
+create table usuario(
+    id int primary key auto_increment,
+    nombre varchar(20),
+    password varchar(255),
+    tipo char,
+    nombre_completo varchar(100)
+);
 ```

@@ -9,41 +9,63 @@
         public $email;
 
         public function guardar(){
-            if ($this -> id){
-                $sql = "UPDATE persona set 
-                id = {$this -> id},
-                nombre = '{$this -> nombre}',
-                apellido = '{$this -> apellido}',
-                edad = {$this -> edad},
-                email = '{$this -> email}'
-                WHERE id = {$this -> id}
-                ";
-            }
-            else{
-                $sql = "INSERT INTO persona(nombre,apellido,edad,email) VALUES (
-                    '{$this -> nombre}',
-                    '{$this -> apellido}',
-                    {$this -> edad},
-                    '{$this -> email}'
-                    )";
-            }
-            $this -> conexion -> query($sql);
-            if($this -> conexion -> error){
-                throw new Exception("Hubo un problema al cargar la persona: " . $this -> conexion -> error);
+            if ($this -> id) $this -> prepararUpdate();
+            else $this -> prepararInsert();
+
+            $this -> sentencia -> execute();
+
+            if($this -> sentencia -> error){
+                throw new Exception("Hubo un problema al cargar la persona: " . $this -> sentencia -> error);
             }
         }
 
+        private function prepararUpdate(){
+            $sql = "UPDATE persona set id = ?, nombre = ?, apellido = ?, edad = ?, email = ?";
+            $this -> sentencia = $this -> conexion -> prepare($sql);
+            $this -> sentencia -> bind_params("issis",
+                $this -> id,
+                $this -> nombre,
+                $this -> apellido,
+                $this -> edad,
+                $this -> email 
+            );
+        }
+        private function prepararInsert(){
+            $sql = "INSERT INTO persona(nombre,apellido,edad,email) VALUES (?,?,?,?)";
+            $this -> sentencia = $this -> conexion -> prepare($sql);
+            $this -> sentencia -> bind_param("ssis",
+                $this -> nombre,
+                $this -> apellido,
+                $this -> edad,
+                $this -> email 
+            );
+        }
         public function eliminar(){
-            $sql = "DELETE FROM persona WHERE id = '{$this -> id}'";
-            $this -> conexion -> query($sql);
-            if($this -> conexion -> error){
+            $this -> prepararEliminar();
+            $this -> sentencia -> execute();
+
+            if($this -> sentencia -> error){
                 throw new Exception("Hubo un problema al eliminar la persona: " . $this -> conexion -> error);
             }
+        }
+
+        private function prepararEliminar(){
+            $sql = "DELETE FROM persona WHERE id = ?";
+            $this -> sentencia = $this -> conexion -> prepare($sql);
+            $this -> sentencia -> bind_param("i", $this -> id);
         }
 
 
 
         public function obtenerTodos(){
+            $filas = $this -> crearArrayDePersonas();
+            if($this -> conexion -> error){
+                throw new Exception("Error al obtener las personas: " . $this -> conexion -> error);
+            }
+            return $filas;
+        }
+
+        private function crearArrayDePersonas(){
             $sql = "SELECT id,nombre,apellido,edad,email FROM persona";
             $filas = array();
             foreach($this -> conexion -> query($sql) -> fetch_all(MYSQLI_ASSOC) as $fila){
@@ -55,23 +77,30 @@
                 $p -> email = $fila['email'];
                 array_push($filas,$p);
             }
-            if($this -> conexion -> error){
-                throw new Exception("Error al obtener las personas: " . $this -> conexion -> error);
-            }
             return $filas;
+
         }
 
         public function obtenerUno($id){
-            $sql = "SELECT id,nombre,apellido,edad,email FROM persona WHERE id = $id";
-            $resultado =  $this -> conexion -> query($sql) -> fetch_assoc();
-            if($this -> conexion -> error){
-                throw new Exception("Error al obtener la personas: " . $this -> conexion -> error);
+            $this -> prepararObtenerUno($id);
+            $resultado = $this -> sentencia -> execute() -> fetch_assoc();
+            if($this -> sentencia -> error){
+                throw new Exception("Error al obtener la personas: " . $this -> sentencia -> error);
             }
+            asignarCamposDePersona($resultado);
+
+        }
+        private function prepararObtenerUno($id){
+            $sql = "SELECT id,nombre,apellido,edad,email FROM persona WHERE id = ?";
+            $this -> sentencia = $this -> conexion -> prepare($sql);
+            $this -> sentencia -> bind_param("i", $id);
+        }
+
+        private function asignarCamposDePersona($resultado){
             $this -> id = $resultado['id'];
             $this -> nombre = $resultado['nombre'];
             $this -> apellido = $resultado['apellido'];
             $this -> edad = $resultado['edad'];
             $this -> email = $resultado['email'];
-
         }
     }
