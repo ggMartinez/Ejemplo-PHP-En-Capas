@@ -9,9 +9,7 @@
         public $email;
 
         public function guardar(){
-            if ($this -> id) $this -> prepararUpdate();
-            else $this -> prepararInsert();
-
+            $this -> id ? $this -> prepararUpdate() : $this -> prepararInsert();
             $this -> sentencia -> execute();
 
             if($this -> sentencia -> error){
