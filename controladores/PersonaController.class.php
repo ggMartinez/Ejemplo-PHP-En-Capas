@@ -25,6 +25,13 @@
         }
 
         public static function ObtenerPersonas(){
+            session_start();
+            
+            if(!isset($_SESSION['autenticado'])){
+                header("Location: /login");
+                return;
+            }
+            
             $p = new PersonaModelo();
             $personas = array();
             foreach($p -> obtenerTodos() as $fila){

@@ -2,19 +2,46 @@
 
     require '../utils/autoloader.php';
 
-    class PersonaController{
+    class UsuarioController{
         public static function IniciarSesion($usuario,$password){
             try{
                 $u = new UsuarioModelo();
                 $u -> nombre = $usuario;
                 $u -> password = $password;
                 $u -> Autenticar();
-                crearSesion($u);
-                cargarVista("menuPrincipal");
+                self::crearSesion($u);
+                //cargarVista("menuPrincipal");
+                
+                header("Location: /principal");
             }
             catch (Exception $e) {
-                generarHtml("login",["falla" => true]);
+                error_log("Fallo login del usuario " . $usuario);
+                generarHtml("formularioLogin",["falla" => true]);
             }
+
+        }
+
+        public static function MostrarLogin(){
+            session_start();
+            if(isset($_SESSION['autenticado'])) header("Location: /principal");
+            else return cargarVista("formularioLogin");
+        }
+
+        public static function MostrarMenuPrincipal(){
+            session_start();
+            if(!isset($_SESSION['autenticado'])) header("Location: /login");
+            else return cargarVista("menuPrincipal");
+        }
+
+
+        private static function crearSesion($usuario){
+            session_start();
+            ob_start();
+            $_SESSION['usuarioId'] = $usuario -> id;
+            $_SESSION['usuarioNombre'] = $usuario -> nombre;
+            $_SESSION['usuarioTipo'] = $usuario -> tipo;
+            $_SESSION['usuarioNombreCompleto'] = $usuario -> nombreCompleto;
+            $_SESSION['autenticado'] = true;
 
         }
 
@@ -38,11 +65,4 @@
             return generarHtml('formularioInsertUsuario',['exito' => false]);
         }
 
-        private static function crearSesion($usuario){
-            session_start();
-            $_SESSION['usuarioId'] = $usuario -> id;
-            $_SESSION['usuarioNombre'] = $usuario -> nombre;
-            $_SESSION['usuarioTipo'] = $usuario -> tipo;
-            $_SESSION['usuarioNombreCompleto'] = $usuario -> nombreCompleto;
-        }
     }
